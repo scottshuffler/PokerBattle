@@ -1,39 +1,44 @@
 from deuces import Deck, Evaluator
+player1_score_count = 0
+player2_score_count = 0
+tie_score_count = 0
 
-deck = Deck()
-player1_hand = deck.draw(2)
-player2_hand = deck.draw(2)
-deck.draw(1)
-board = deck.draw(3)
-deck.draw(1)
-board.append(deck.draw(1))
-deck.draw(1)
-board.append(deck.draw(1))
+def play():
+	deck = Deck()
+	player1_hand = deck.draw(2)
+	player2_hand = deck.draw(2)
+	deck.draw(1)
+	board = deck.draw(3)
+	deck.draw(1)
+	board.append(deck.draw(1))
+	deck.draw(1)
+	board.append(deck.draw(1))
 
-evaluator = Evaluator()
+	evaluator = Evaluator()
 
-p1_score = evaluator.evaluate(board, player1_hand)
-p2_score = evaluator.evaluate(board, player2_hand)
+	p1_score = evaluator.evaluate(board, player1_hand)
+	p2_score = evaluator.evaluate(board, player2_hand)
+
+	if p1_score < p2_score:
+		global player1_score_count
+		player1_score_count += 1
+	elif p1_score == p2_score:
+		global tie_score_count
+		tie_score_count += 1
+	else:
+		global player2_score_count
+		player2_score_count += 1
 
 
-
-# p1_class = eval.get_rank_class(p1_score)
-# p2_class = eval.get_rank_class(p2_score)
-
-
-# print "Player 1 hand rank = %d \n" % (p1_score, eval.class_to_string(p1_class))
-
-# print "Player 2 hand rank = %d \n" % (p2_score, eval.class_to_string(p2_class))
-
-print "Player 1 hand rank = %d \n" % (p1_score)
-
-print "Player 2 hand rank = %d \n" % (p2_score)
-
-if p1_score < p2_score:
+for x in range(0, 3000):
+	play()
+print "Player 1 score: " + str(player1_score_count)
+print "Player 2 score: " + str(player2_score_count)
+print "Ties: " + str(tie_score_count)
+if player1_score_count > player2_score_count:
 	print "Player 1 wins!"
-elif p1_score == p2_score:
-	print "Tie!"
-else:
+elif player2_score_count > player1_score_count:
 	print "Player 2 wins!"
-
+else:
+	print "Tie? wtf"
 
