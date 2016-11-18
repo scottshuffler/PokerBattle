@@ -1,9 +1,14 @@
 from deuces import Deck, Evaluator
 
 deck = Deck()
-board = deck.draw(5)
 player1_hand = deck.draw(2)
 player2_hand = deck.draw(2)
+deck.draw(1)
+board = deck.draw(3)
+deck.draw(1)
+board.append(deck.draw(1))
+deck.draw(1)
+board.append(deck.draw(1))
 
 evaluator = Evaluator()
 
@@ -30,3 +35,5 @@ elif p1_score == p2_score:
 	print "Tie!"
 else:
 	print "Player 2 wins!"
+
+
