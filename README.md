@@ -1,6 +1,6 @@
 # PokerBattle
 
-## Algorithms 2016
+## Algorithms 2016 Term Paper
 
 ### Using dueces for deck evaluation and building
 To install:
