@@ -1,5 +1,5 @@
 from __future__ import division
-from deuces import Deck, Evaluator
+from deuces import Deck, Evaluator, Card
 player1_score_count = 0
 player2_score_count = 0
 tie_score_count = 0
@@ -11,9 +11,10 @@ from math import log, sqrt
 # Simple is player 2
 
 class Board(object):
+
     def start(self):
         #     P1H,P2H,P1M, P2M, POT, TABLE, BB, SB, CP, LA
-        state = [[],[],998, 999, 3, [], 1, 2, 1, ""]
+        return [[],[],98, 99, 3, [], 2, 1, 1, ""]
 
     def current_player(self, state):
         return state[8]
@@ -21,41 +22,61 @@ class Board(object):
     def next_state(self, state, play):
         # Takes the game state, and the move to be applied.
         # Returns the new game state.
-        state_copy = state[:]
-        state_history.append(state_copy)
-
         if play in ("R", "CH", "CA", "F", "P"):
-            cp = current_player(state)
+            board = Board()
+            cp = board.current_player(state)
+            op = cp ^ 3
+            LA = ""
             if play ==  "P":
-                pass
-            elif play == "R" and state[cp + 1] != 0:
-                old_money = state[cp+1]
-                new_money = max(old_money - 1, old_money - 2)
-                state[cp+1] -= new_money
-                state[4] += old_money - new_money
+                LA = "P"
             elif play == "CH":
-                pass
+                LA = "CH"
+            elif play == "R":
+                if state[cp + 1] >= 2:
+                    state[cp+1] -= 2
+                    state[4] += 2
+                else:
+                    # old_money = state[cp+1]
+                    # new_money = max(0, old_money)
+                    # state[cp+1] -= new_money
+                    # state[4] += old_money - new_money
+                    state[cp+1] -= 1
+                    state[4] += 1
+                LA = "R"
             elif play == "CA":
-                pass
-            else:
-                pass
-
+                if state[4] % 2 == 1 and len(state_history) == 0:
+                    state[cp+1] -= 1
+                    state[4] += 1
+                if state[cp + 1] >= 2:
+                    state[cp+1] -= 2
+                    state[4] += 2
+                else:
+                    state[cp+1] -= 1
+                    state[4] += 1
+                LA = "CA"
+            elif play == "F":
+                state[op+1] += pot
+                pot = 0
+                LA = "F"
+        state[8] = op
+        state[9] = LA
+        return state
 
     def legal_plays(self, state_history):
         cp = state_history[-1][8] ^ 3
         if state_history[-1][cp + 1] == 0:
             return ["P"]
         if state_history[-1][9] == "R":
-            return ["R", "CA", "F"]
+            return ["CA", "F"]
         elif state_history[-1][9] == "CH":
-            return ["R", "CA", "CH", "F"]
+            return ["R", "CH"]
         elif state_history[-1][9] == "CA":
-            return ["R", "CA", "CH", "F"]
+            return ["R", "CH"]
         else:
             return []
 
     def winner(self, state_history):
-
+        
         # Takes a sequence of game states representing the full
         # game history.  If the game is now won, return the player
         # number.  If the game is still ongoing, return zero.  If
@@ -78,19 +99,22 @@ class MonteCarlo(object):
 
     def update(self, state):
         # Takes a game state, and appends it to the history.
+        
         self.states.append(state)
-        pass
 
     def get_play(self):
+        print "In get play"
         self.max_depth = 0
         state = self.states[-1]
         player = self.board.current_player(state)
         legal = self.board.legal_plays(self.states[:])
-
+         
         # Bail out early if there is no real choice to be made.
         if not legal:
+            print "Not legal"
             return
         if len(legal) == 1:
+            print "Only one legal"
             return legal[0]
 
         games = 0
@@ -147,6 +171,7 @@ class MonteCarlo(object):
                 # If we have stats on all of the legal moves here, use them.
                 log_total = log(
                     sum(plays[(player, S)] for p, S in moves_states))
+
                 value, move, state = max(
                     ((wins[(player, S)] / plays[(player, S)]) +
                      self.C * sqrt(log_total / plays[(player, S)]), p, S)
@@ -182,30 +207,42 @@ class MonteCarlo(object):
                 wins[(player, state)] += 1
 
 def play():
+    # deck = Deck()
+    # player1_hand = deck.draw(2)
+    # player2_hand = deck.draw(2)
+    # deck.draw(1)
+    # board = deck.draw(3)
+    # deck.draw(1)
+    # board.append(deck.draw(1))
+    # deck.draw(1)
+    # board.append(deck.draw(1))
+
+    # evaluator = Evaluator()
+
+    # p1_score = evaluator.evaluate(board, player1_hand)
+    # p2_score = evaluator.evaluate(board, player2_hand)
+
+    # if p1_score < p2_score:
+    #     global player1_score_count
+    #     player1_score_count += 1
+    # elif p1_score == p2_score:
+    #     global tie_score_count
+    #     tie_score_count += 1
+    # else:
+    #     global player2_score_count
+    #     player2_score_count += 1
+    board = Board()
+    state = board.start()
+    monte = MonteCarlo(board)
     deck = Deck()
     player1_hand = deck.draw(2)
     player2_hand = deck.draw(2)
-    deck.draw(1)
-    board = deck.draw(3)
-    deck.draw(1)
-    board.append(deck.draw(1))
-    deck.draw(1)
-    board.append(deck.draw(1))
+    state[0] = player1_hand
+    state[1] = player2_hand
+    state[9] = "CA"
+    monte.update(state)
+    monte.get_play()
 
-    evaluator = Evaluator()
-
-    p1_score = evaluator.evaluate(board, player1_hand)
-    p2_score = evaluator.evaluate(board, player2_hand)
-
-    if p1_score < p2_score:
-        global player1_score_count
-        player1_score_count += 1
-    elif p1_score == p2_score:
-        global tie_score_count
-        tie_score_count += 1
-    else:
-        global player2_score_count
-        player2_score_count += 1
 
 
 for x in range(0, 30):
