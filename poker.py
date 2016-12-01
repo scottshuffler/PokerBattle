@@ -1,10 +1,14 @@
 from __future__ import division
 from deuces import Deck, Evaluator, Card
 player1_score_count = 0
+player1_fold_count = 0
 player2_score_count = 0
+player2_fold_count = 0
 tie_score_count = 0
+games_played = 0
 import datetime
-from random import choice
+import random as random
+from random import choice, randint
 from math import log, sqrt
 
 # Monte is player 1
@@ -14,14 +18,20 @@ class Board(object):
 
     def start(self):
         #     P1H,P2H,P1M, P2M, POT, TABLE, BB, SB, CP, LA
-        return [[],[],98, 99, 3, [], 2, 1, 1, ""]
+        bb = random.randint(1, 2)
+        sb = 1
+        if bb == 1:
+            sb = 2
+            return [[],[],100, 100, 0, [], 1, 2, 2, ""]
+        return [[],[],100, 100, 0, [], 2, 1, 1, ""]
 
     def current_player(self, state):
         return state[8]
 
-    def next_state(self, state, play):
+    def next_state(self, state, play, is_blind):
         # Takes the game state, and the move to be applied.
         # Returns the new game state.
+        state = list(state)
         if play in ("R", "CH", "CA", "F", "P"):
             board = Board()
             cp = board.current_player(state)
@@ -36,18 +46,15 @@ class Board(object):
                     state[cp+1] -= 2
                     state[4] += 2
                 else:
-                    # old_money = state[cp+1]
-                    # new_money = max(0, old_money)
-                    # state[cp+1] -= new_money
-                    # state[4] += old_money - new_money
                     state[cp+1] -= 1
                     state[4] += 1
                 LA = "R"
             elif play == "CA":
-                if state[4] % 2 == 1 and len(state_history) == 0:
+                if is_blind:
+                    #print "is blind"
                     state[cp+1] -= 1
                     state[4] += 1
-                if state[cp + 1] >= 2:
+                elif state[cp + 1] >= 2:
                     state[cp+1] -= 2
                     state[4] += 2
                 else:
@@ -55,25 +62,38 @@ class Board(object):
                     state[4] += 1
                 LA = "CA"
             elif play == "F":
-                state[op+1] += pot
-                pot = 0
+                state[op+1] += state[4]
+                state[4] = 0
                 LA = "F"
         state[8] = op
         state[9] = LA
         return state
 
     def legal_plays(self, state_history):
-        cp = state_history[-1][8] ^ 3
-        if state_history[-1][cp + 1] == 0:
-            return ["P"]
-        if state_history[-1][9] == "R":
-            return ["CA", "F"]
-        elif state_history[-1][9] == "CH":
-            return ["R", "CH"]
-        elif state_history[-1][9] == "CA":
-            return ["R", "CH"]
+        if len(state_history) > 1:
+            cp = state_history[-1][8] ^ 3
+            if state_history[-1][cp + 1] == 0:
+                return ["P"]
+            if state_history[-1][9] == "R":
+                return ["CA", "F"]
+            elif state_history[-1][9] == "CH":
+                return ["R", "CH"]
+            elif state_history[-1][9] == "CA":
+                return ["R", "CH"]
+            else:
+                return []
         else:
-            return []
+            cp = state_history[0][8] ^ 3
+            if state_history[0][cp + 1] == 0:
+                return ["P"]
+            if state_history[0][9] == "R":
+                return ["CA", "F"]
+            elif state_history[0][9] == "CH":
+                return ["R", "CH"]
+            elif state_history[0][9] == "CA":
+                return ["R", "CH"]
+            else:
+                return []
 
     def winner(self, state_history):
         
@@ -83,130 +103,116 @@ class Board(object):
         # the game is tied, return a different distinct value, e.g. -1.
         pass
 
-class MonteCarlo(object):
-    def __init__(self, board, **kwargs):
-        # Takes an instance of a Board and optionally some keyword
-        # arguments.  Initializes the list of game states and the
-        # statistics tables.
+class simplebot:
+    # def __init__(self, board, check, bet, call, fold):
+    #     self.check, self.bet, self.call, self.fold = check, bet, call, fold
+    #     self.board = board
+    #     self.state = []
+    #     pass
+    def __init__(self, board, player_number, bcheck, bbet, bcall, bfold, scheck, sbet, scall, sfold):
+        self.bcheck, self.bbet, self.bcall, self.bfold = bcheck, bbet, bcall, bfold
+        self.scheck, self.sbet, self.scall, self.sfold = scheck, sbet, scall, sfold
         self.board = board
-        self.states = []
-        seconds = kwargs.get('time', 30)
-        self.calculation_time = datetime.timedelta(seconds=seconds)
-        self.max_moves = kwargs.get('max_moves', 100)
-        self.C = kwargs.get('C', 1.4)
-        self.wins = {}
-        self.plays = {}
+        self.state = []
+        self.player_number = player_number
+        pass
+    def update_aggression(self, aggression):
+        self.aggression = aggression
 
-    def update(self, state):
-        # Takes a game state, and appends it to the history.
-        
-        self.states.append(state)
+    def update_state(self, state):
+        self.state.append(state)
 
-    def get_play(self):
-        print "In get play"
-        self.max_depth = 0
-        state = self.states[-1]
-        player = self.board.current_player(state)
-        legal = self.board.legal_plays(self.states[:])
-         
-        # Bail out early if there is no real choice to be made.
-        if not legal:
-            print "Not legal"
-            return
-        if len(legal) == 1:
-            print "Only one legal"
-            return legal[0]
-
-        games = 0
-        begin = datetime.datetime.utcnow()
-        while datetime.datetime.utcnow() - begin < self.calculation_time:
-            self.run_simulation()
-            games += 1
-
-        moves_states = [(p, self.board.next_state(state, p)) for p in legal]
-
-        # Display the number of calls of `run_simulation` and the
-        # time elapsed.
-        print games, datetime.datetime.utcnow() - begin
-
-        # Pick the move with the highest percentage of wins.
-        percent_wins, move = max(
-            (self.wins.get((player, S), 0) /
-             self.plays.get((player, S), 1),
-             p)
-            for p, S in moves_states
-        )
-
-        # Display the stats for each possible play.
-        for x in sorted(
-            ((100 * self.wins.get((player, S), 0) /
-              self.plays.get((player, S), 1),
-              self.wins.get((player, S), 0),
-              self.plays.get((player, S), 0), p)
-             for p, S in moves_states),
-            reverse=True
-        ):
-            print "{3}: {0:.2f}% ({1} / {2})".format(*x)
-
-        print "Maximum depth searched:", self.max_depth
-
-        return move
-
-    def run_simulation(self):
-        # A bit of an optimization here, so we have a local
-        # variable lookup instead of an attribute access each loop.
-        plays, wins = self.plays, self.wins
-
-        visited_states = set()
-        states_copy = self.states[:]
-        state = states_copy[-1]
-        player = self.board.current_player(state)
-
-        expand = True
-        for t in xrange(1, self.max_moves + 1):
-            legal = self.board.legal_plays(states_copy)
-            moves_states = [(p, self.board.next_state(state, p)) for p in legal]
-
-            if all(plays.get((player, S)) for p, S in moves_states):
-                # If we have stats on all of the legal moves here, use them.
-                log_total = log(
-                    sum(plays[(player, S)] for p, S in moves_states))
-
-                value, move, state = max(
-                    ((wins[(player, S)] / plays[(player, S)]) +
-                     self.C * sqrt(log_total / plays[(player, S)]), p, S)
-                    for p, S in moves_states
-                )
+    def first_move(self, state):
+        # state[6] is BB
+        # state[7] is SB
+        if state[6] == self.player_number:
+            #print "I'm the big blind"
+            #print self.player_number
+            if state[self.player_number + 1] >= 2:
+                state[self.player_number + 1] -= 2
+                state[4] += 2
             else:
-                # Otherwise, just make an arbitrary decision.
-                move, state = choice(moves_states)
+                state[self.player_number+1] -= 1
+                state[4] += 1
+        else:
+            #print "I'm the small blind"
+            state[self.player_number+1] -= 1
+            state[4] += 1
+        #print state
 
-            states_copy.append(state)
+    def force_move(self, state, play):
+        return self.board.next_state(state, play, False)
 
-            # `player` here and below refers to the player
-            # who moved into that particular state.
-            if expand and (player, state) not in plays:
-                expand = False
-                plays[(player, state)] = 0
-                wins[(player, state)] = 0
-                if t > self.max_depth:
-                    self.max_depth = t
+    def next_move(self, state):
+        self.update_state(state)
+        legal = self.board.legal_plays(self.state)
+        if not legal:
+            play = random.randint(1, 100)
+            if play > 40:
+                state = self.board.next_state(state, "F", True)
+            else:
+                state = self.board.next_state(state, "CA", True)
+        else:
+            #
+            # Big blind
+            #play = choice(legal)
+            if self.player_number == state[6] and len(legal) > 1:
+                picked = False
+                fold = self.bfold
+                call = fold + self.bcall
+                check = call + self.bcheck
 
-            visited_states.add((player, state))
+                while not picked:
+                    rand = random.randint(1, 100)
+                    if rand < fold and "F" in legal:
+                        state = self.board.next_state(state, "F", False) 
+                        picked = True
+                    elif rand < call and "CA" in legal:
+                        state = self.board.next_state(state, "CA", False) 
+                        picked = True
+                    elif rand < check and "CH" in legal:
+                        state = self.board.next_state(state, "CH", False) 
+                        picked = True
+                    elif "R" in legal:
+                        state = self.board.next_state(state, "R", False)
+                        picked = True
+            elif self.player_number == state[6] and len(legal) > 0:
+                state = self.board.next_state(state, legal[0], False)
+            elif self.player_number == state[7] and len(legal) > 1:
+                # play = choice(legal)
+                picked = False
 
-            player = self.board.current_player(state)
-            winner = self.board.winner(states_copy)
-            if winner:
-                break
+                fold = self.sfold
+                call = fold + self.scall
 
-        for player, state in visited_states:
-            if (player, state) not in plays:
-                continue
-            plays[(player, state)] += 1
-            if player == winner:
-                wins[(player, state)] += 1
+                check = self.scheck
+                bet = check + self.sbet
+
+                while not picked:
+                    rand = random.randint(1, 100)
+                    if "CH" in legal and "R" in legal:
+                        if rand < check:
+                            state = self.board.next_state(state, "CH", False) 
+                            picked = True
+                        else:
+                            state = self.board.next_state(state, "R", False)
+                            picked = True
+                    elif "F" in legal and "CA" in legal:
+                        if rand < fold:
+                            state = self.board.next_state(state, "F", False) 
+                            picked = True
+                        else:
+                            state = self.board.next_state(state, "CA", False) 
+                            picked = True
+            elif self.player_number == state[7] and len(legal) > 0:
+                state = self.board.next_state(state, legal[0], False)  
+            else:
+                play = choice(legal)
+                state = self.board.next_state(state, play, False) 
+        return state
 
 def play():
+    print "Playing..."
     # deck = Deck()
     # player1_hand = deck.draw(2)
     # player2_hand = deck.draw(2)
@@ -217,10 +223,9 @@ def play():
     # deck.draw(1)
     # board.append(deck.draw(1))
 
-    # evaluator = Evaluator()
+    
 
-    # p1_score = evaluator.evaluate(board, player1_hand)
-    # p2_score = evaluator.evaluate(board, player2_hand)
+    
 
     # if p1_score < p2_score:
     #     global player1_score_count
@@ -233,22 +238,136 @@ def play():
     #     player2_score_count += 1
     board = Board()
     state = board.start()
-    monte = MonteCarlo(board)
-    deck = Deck()
-    player1_hand = deck.draw(2)
-    player2_hand = deck.draw(2)
-    state[0] = player1_hand
-    state[1] = player2_hand
-    state[9] = "CA"
-    monte.update(state)
-    monte.get_play()
+
+#def __init__(self, board, player_number, bcheck, bbet, bcall, bfold, scheck, sbet, scall, sfold):
+
+    passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
+    aggressivebot = simplebot(board, 2, 20, 30, 30, 20, 40, 60, 66, 33)
+    while state[2] > 0 and state[3] > 0:
+        global games_played
+        games_played += 1
+        if games_played > 1:
+            bb = state[6]
+            state[6] = state[7]
+            state[7] = bb
+        deck = Deck()
+        evaluator = Evaluator()
+        player1_hand = deck.draw(2)
+        player2_hand = deck.draw(2)
+        state[0] = []
+        state[1] = []
+        state[5] = []
+        state[0] = player1_hand
+        state[1] = player2_hand
+        
+        passivebot.first_move(state)
+        aggressivebot.first_move(state)
+
+        if state[7] == 1:
+            # print "Start 1"
+            state = passivebot.next_move(state)
+            # print state
+            # print ""
+            if state[9] != "F":
+                # print "Start 2"
+                state = aggressivebot.force_move(state, "CH")
+                # print state
+                # print ""
+            else:
+                global player1_fold_count
+                player1_fold_count += 1
+                
+        else:
+            # print "Start 1"
+            state = aggressivebot.next_move(state)
+            # print state
+            # print ""
+            if state[9] != "F":
+                # print "Start 2"
+                state = passivebot.force_move(state, "CH")
+                # print state
+                # print ""
+            else:
+                global player2_fold_count
+                player2_fold_count += 1
+                
+        
+        if state[9] != "F":
+            # print "drawing cards"
+            # print "flop"
+            deck.draw(1)
+            state[5] += deck.draw(3)
+
+        count = 3
+        card_counter = 0
+        ## GAME ON
+        while state[9] != "F":
+
+            # print ""
+            # print "Start " + str(count)
+            LA = state[9]
+            if state[8] == 1:
+                state = passivebot.next_move(state)
+            else:
+                state = aggressivebot.next_move(state)
+
+            # print "End"
+            # print state
+            # print ""
+            count += 1
+            card_counter += 1
+            if state[9] == "F":
+                if state[8] == 2:
+                    global player1_fold_count
+                    player1_fold_count += 1
+                else:
+                    global player2_fold_count
+                    player2_fold_count += 1
+                break
+            if LA == "R" and state[9] == "CA" or LA == "CH" and state[9] == "CH" and card_counter > 1:
+                if len(state[5]) == 3:
+                    #print "turn"
+                    deck.draw(1)
+                    state[5].append(deck.draw(1))
+                elif len(state[5]) == 4:
+                    #print "river"
+                    deck.draw(1)
+                    state[5].append(deck.draw(1))
+                elif len(state[5]) == 5:
+                    #print "showdown"
+                    p1_score = evaluator.evaluate(state[5], player1_hand)
+                    p2_score = evaluator.evaluate(state[5], player2_hand)
+                    if p1_score == p2_score:
+                        pot = state[4]
+                        state[2] += (pot / 2)
+                        state[3] += (pot / 2)
+                        state[4] = 0
+                        global tie_score_count
+                        tie_score_count += 1
+                    elif p1_score < p2_score:
+                        #print "player 1 wins"
+                        state[2] += state[4]
+                        state[4] = 0
+                        global player1_score_count
+                        player1_score_count += 1
+                    else:
+                        #print "player 2 wins"
+                        state[3] += state[4]
+                        state[4] = 0
+                        global player2_score_count
+                        player2_score_count += 1
+                    #print state
+                    break
+                card_counter = 0
+                
 
 
-
-for x in range(0, 30):
+for x in range(0, 10):
     play()
 print "Player 1 score: " + str(player1_score_count)
 print "Player 2 score: " + str(player2_score_count)
+print "Player 1 folds: " + str(player1_fold_count)
+print "Player 2 folds: " + str(player2_fold_count)
 print "Ties: " + str(tie_score_count)
 if player1_score_count > player2_score_count:
     print "Player 1 wins!"
@@ -256,4 +375,5 @@ elif player2_score_count > player1_score_count:
     print "Player 2 wins!"
 else:
     print "Tie? wtf"
+print "Games played: " + str(games_played)
 
