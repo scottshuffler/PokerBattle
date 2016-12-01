@@ -6,6 +6,15 @@ player2_score_count = 0
 player2_fold_count = 0
 tie_score_count = 0
 games_played = 0
+
+total_games_played = 0
+total_player1_score_count = 0
+total_player1_fold_count = 0
+total_player2_score_count = 0
+total_player2_fold_count = 0
+total_tie_score_count = 0
+total_seconds = 0
+
 import datetime
 import time
 import random as random
@@ -244,7 +253,8 @@ def play():
 
     passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
     #passivebot = simplebot(board, 1, 20, 30, 30, 20, 40, 60, 66, 33)
-    aggressivebot = simplebot(board, 2, 20, 30, 30, 20, 40, 60, 66, 33)
+    #aggressivebot = simplebot(board, 2, 20, 30, 30, 20, 40, 60, 66, 33)
+    aggressivebot = simplebot(board, 2, 30, 10, 20, 40, 70, 30, 33, 66)
     while state[2] > 0 and state[3] > 0:
         global games_played
         games_played += 1
@@ -383,9 +393,27 @@ for j in range(1,10):
     else:
         print "Tie? wtf"
     print "Games played: " + str(games_played)
+
+
+    total_games_played = games_played
+    total_player1_score_count = player1_score_count
+    total_player1_fold_count = player1_fold_count
+    total_player2_score_count = player2_score_count
+    total_player2_fold_count = player2_fold_count
+    total_tie_score_count = tie_score_count
+
     player1_score_count = 0
     player2_score_count = 0
     player1_fold_count = 0
     player2_fold_count = 0
     tie_score_count = 0
     games_played = 0
+print "----- FINAL RESULTS -----"
+print "Player 1 score: " + str(total_player1_score_count)
+print "Player 2 score: " + str(total_player2_score_count)
+print "Player 1 folds: " + str(total_player1_fold_count)
+print "Player 2 folds: " + str(total_player2_fold_count)
+print "Player 1 total score: " + str(total_player1_score_count + total_player2_fold_count)
+print "Player 2 total score: " + str(total_player2_score_count + total_player1_fold_count)
+print "Ties: " + str(total_tie_score_count)
+print "Games played: " + str(total_games_played)
