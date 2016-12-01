@@ -242,8 +242,8 @@ def play():
 
 #def __init__(self, board, player_number, bcheck, bbet, bcall, bfold, scheck, sbet, scall, sfold):
 
-    #passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
-    passivebot = simplebot(board, 1, 20, 30, 30, 20, 40, 60, 66, 33)
+    passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
+    #passivebot = simplebot(board, 1, 20, 30, 30, 20, 40, 60, 66, 33)
     aggressivebot = simplebot(board, 2, 20, 30, 30, 20, 40, 60, 66, 33)
     while state[2] > 0 and state[3] > 0:
         global games_played
