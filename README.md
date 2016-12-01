@@ -11,6 +11,16 @@ pip install deuces
 See their repo for more info
 https://github.com/worldveil/deuces/blob/master/README.md
 
+## Passive VS Aggressive 
+
+Total games: 23585
+
+Player 2 won 6/10 games
+
+Player 2 on avg won in 
+
+
+
 Player 1 score: 226
 Player 2 score: 170
 Player 1 folds: 1582
@@ -90,3 +100,37 @@ Player 2 folds: 579
 Ties: 6
 Player 2 wins!
 Games played: 1896
+
+## Aggressive VS Aggressive
+
+Player 1 score: 571
+Player 2 score: 547
+Player 1 folds: 2366
+Player 2 folds: 2407
+Ties: 42
+Player 1 wins!
+Games played: 5933
+
+Player 1 score: 1290
+Player 2 score: 1342
+Player 1 folds: 5577
+Player 2 folds: 5327
+Ties: 119
+Player 2 wins!
+Games played: 13655
+
+Player 1 score: 1011
+Player 2 score: 1071
+Player 1 folds: 4201
+Player 2 folds: 4050
+Ties: 90
+Player 2 wins!
+Games played: 10423
+
+Player 1 score: 602
+Player 2 score: 701
+Player 1 folds: 2761
+Player 2 folds: 2651
+Ties: 58
+Player 2 wins!
+Games played: 6773

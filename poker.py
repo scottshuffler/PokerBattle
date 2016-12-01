@@ -7,6 +7,7 @@ player2_fold_count = 0
 tie_score_count = 0
 games_played = 0
 import datetime
+import time
 import random as random
 from random import choice, randint
 from math import log, sqrt
@@ -241,7 +242,8 @@ def play():
 
 #def __init__(self, board, player_number, bcheck, bbet, bcall, bfold, scheck, sbet, scall, sfold):
 
-    passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
+    #passivebot = simplebot(board, 1, 30, 10, 20, 40, 70, 30, 33, 66)
+    passivebot = simplebot(board, 1, 20, 30, 30, 20, 40, 60, 66, 33)
     aggressivebot = simplebot(board, 2, 20, 30, 30, 20, 40, 60, 66, 33)
     while state[2] > 0 and state[3] > 0:
         global games_played
@@ -361,19 +363,24 @@ def play():
                 card_counter = 0
                 
 
-
-for x in range(0, 10):
-    play()
-print "Player 1 score: " + str(player1_score_count)
-print "Player 2 score: " + str(player2_score_count)
-print "Player 1 folds: " + str(player1_fold_count)
-print "Player 2 folds: " + str(player2_fold_count)
-print "Ties: " + str(tie_score_count)
-if player1_score_count > player2_score_count:
-    print "Player 1 wins!"
-elif player2_score_count > player1_score_count:
-    print "Player 2 wins!"
-else:
-    print "Tie? wtf"
-print "Games played: " + str(games_played)
+for j in range(1,10):
+    start_time = time.clock()
+    for x in range(0, 10):
+        play()
+    print "Tournament took: " + str(int(time.clock() - start_time)) + " seconds"
+    del start_time
+    print "Player 1 score: " + str(player1_score_count)
+    print "Player 2 score: " + str(player2_score_count)
+    print "Player 1 folds: " + str(player1_fold_count)
+    print "Player 2 folds: " + str(player2_fold_count)
+    print "Player 1 total score: " + str(player1_score_count + player2_fold_count)
+    print "Player 2 total score: " + str(player2_score_count + player1_fold_count)
+    print "Ties: " + str(tie_score_count)
+    if player1_score_count > player2_score_count:
+        print "Player 1 wins!"
+    elif player2_score_count > player1_score_count:
+        print "Player 2 wins!"
+    else:
+        print "Tie? wtf"
+    print "Games played: " + str(games_played)
 
