@@ -395,12 +395,12 @@ for j in range(1,10):
     print "Games played: " + str(games_played)
 
 
-    total_games_played = games_played
-    total_player1_score_count = player1_score_count
-    total_player1_fold_count = player1_fold_count
-    total_player2_score_count = player2_score_count
-    total_player2_fold_count = player2_fold_count
-    total_tie_score_count = tie_score_count
+    total_games_played += games_played
+    total_player1_score_count += player1_score_count
+    total_player1_fold_count += player1_fold_count
+    total_player2_score_count += player2_score_count
+    total_player2_fold_count += player2_fold_count
+    total_tie_score_count += tie_score_count
 
     player1_score_count = 0
     player2_score_count = 0
