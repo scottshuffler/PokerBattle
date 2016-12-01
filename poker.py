@@ -383,4 +383,9 @@ for j in range(1,10):
     else:
         print "Tie? wtf"
     print "Games played: " + str(games_played)
-
+    player1_score_count = 0
+    player2_score_count = 0
+    player1_fold_count = 0
+    player2_fold_count = 0
+    tie_score_count = 0
+    games_played = 0
