@@ -231,109 +231,109 @@ Games played: 11224
 
 ## Passive VS Passive 
 
-Total games player: 
+Total games player: 227956
 
-AVG games played: 
+AVG games played: 25328
 AVG time: 158 seconds
 
-Total showdowns: 
-AVG showdowns: 
+Total showdowns: 48258
+AVG showdowns: 5362
 
-Tournament took: 195 seconds
-Player 1 score: 3468
-Player 2 score: 3386
-Player 1 folds: 12855
-Player 2 folds: 13118
-Player 1 total score: 16586
-Player 2 total score: 16241
-Ties: 293
+Tournament took: 182 seconds
+Player 1 score: 3400
+Player 2 score: 3374
+Player 1 folds: 12194
+Player 2 folds: 12176
+Player 1 total score: 15576
+Player 2 total score: 15568
+Ties: 250
 Player 1 wins!
-Games played: 33120
+Games played: 31394
 
-Tournament took: 200 seconds
-Player 1 score: 6974
-Player 2 score: 6907
-Player 1 folds: 25764
-Player 2 folds: 26248
-Player 1 total score: 33222
-Player 2 total score: 32671
-Ties: 587
+Tournament took: 124 seconds
+Player 1 score: 2280
+Player 2 score: 2231
+Player 1 folds: 8216
+Player 2 folds: 8486
+Player 1 total score: 10766
+Player 2 total score: 10447
+Ties: 199
 Player 1 wins!
-Games played: 66480
-
-Tournament took: 150 seconds
-Player 1 score: 9735
-Player 2 score: 9637
-Player 1 folds: 35764
-Player 2 folds: 36331
-Player 1 total score: 46066
-Player 2 total score: 45401
-Ties: 831
-Player 1 wins!
-Games played: 92298
-
-Tournament took: 180 seconds
-Player 1 score: 12966
-Player 2 score: 12944
-Player 1 folds: 47756
-Player 2 folds: 48109
-Player 1 total score: 61075
-Player 2 total score: 60700
-Ties: 1082
-Player 1 wins!
-Games played: 122857
-
-Tournament took: 171 seconds
-Player 1 score: 15944
-Player 2 score: 16032
-Player 1 folds: 59100
-Player 2 folds: 59759
-Player 1 total score: 75703
-Player 2 total score: 75132
-Ties: 1351
-Player 2 wins!
-Games played: 152186
-
-Tournament took: 141 seconds
-Player 1 score: 18398
-Player 2 score: 18490
-Player 1 folds: 68242
-Player 2 folds: 68943
-Player 1 total score: 87341
-Player 2 total score: 86732
-Ties: 1588
-Player 2 wins!
-Games played: 175661
+Games played: 21412
 
 Tournament took: 173 seconds
-Player 1 score: 21518
-Player 2 score: 21639
-Player 1 folds: 79603
-Player 2 folds: 80220
-Player 1 total score: 101738
-Player 2 total score: 101242
-Ties: 1875
+Player 1 score: 3159
+Player 2 score: 3180
+Player 1 folds: 11602
+Player 2 folds: 11802
+Player 1 total score: 14961
+Player 2 total score: 14782
+Ties: 254
 Player 2 wins!
-Games played: 204855
+Games played: 29997
 
-Tournament took: 208 seconds
-Player 1 score: 25290
-Player 2 score: 25471
-Player 1 folds: 93373
-Player 2 folds: 94135
-Player 1 total score: 119425
-Player 2 total score: 118844
-Ties: 2213
+Tournament took: 118 seconds
+Player 1 score: 2156
+Player 2 score: 2188
+Player 1 folds: 7996
+Player 2 folds: 7991
+Player 1 total score: 10147
+Player 2 total score: 10184
+Ties: 188
 Player 2 wins!
-Games played: 240482
+Games played: 20519
 
-Tournament took: 163 seconds
-Player 1 score: 28253
-Player 2 score: 28446
-Player 1 folds: 104060
-Player 2 folds: 104915
-Player 1 total score: 133168
-Player 2 total score: 132506
-Ties: 2481
+Tournament took: 174 seconds
+Player 1 score: 3225
+Player 2 score: 3147
+Player 1 folds: 11597
+Player 2 folds: 11589
+Player 1 total score: 14814
+Player 2 total score: 14744
+Ties: 255
+Player 1 wins!
+Games played: 29813
+
+Tournament took: 182 seconds
+Player 1 score: 3257
+Player 2 score: 3241
+Player 1 folds: 12265
+Player 2 folds: 12071
+Player 1 total score: 15328
+Player 2 total score: 15506
+Ties: 288
+Player 1 wins!
+Games played: 31122
+
+Tournament took: 132 seconds
+Player 1 score: 2461
+Player 2 score: 2472
+Player 1 folds: 9012
+Player 2 folds: 9040
+Player 1 total score: 11501
+Player 2 total score: 11484
+Ties: 199
 Player 2 wins!
-Games played: 268155
+Games played: 23184
+
+Tournament took: 120 seconds
+Player 1 score: 2155
+Player 2 score: 2190
+Player 1 folds: 8038
+Player 2 folds: 7962
+Player 1 total score: 10117
+Player 2 total score: 10228
+Ties: 201
+Player 2 wins!
+Games played: 20546
+
+Tournament took: 118 seconds
+Player 1 score: 2071
+Player 2 score: 2071
+Player 1 folds: 7870
+Player 2 folds: 7765
+Player 1 total score: 9836
+Player 2 total score: 9941
+Ties: 192
+Tie? wtf
+Games played: 19969
